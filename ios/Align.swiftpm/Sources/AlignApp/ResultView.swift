@@ -9,22 +9,25 @@ struct ResultView: View {
     var body: some View {
         ScrollView {
             Text(tailoredResume)
-                .font(.body)
+                .font(.custom("Georgia", size: 16, relativeTo: .body))
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
         }
+        .background(Color.alignBase)
         .navigationTitle("Tailored Resume")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 ShareLink(item: tailoredResume)
+                    .tint(.alignSecondaryIndigo)
             }
             ToolbarItem(placement: .cancellationAction) {
                 Button("Start Over") {
                     onStartOver()
                     dismiss()
                 }
+                .tint(.alignSecondaryIndigo)
             }
         }
     }

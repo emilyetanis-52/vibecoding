@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct TailorResumeApp: App {
+struct AlignApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()

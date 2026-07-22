@@ -4,20 +4,20 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "TailorResume",
+    name: "Align",
     platforms: [
         .iOS("17.0")
     ],
     products: [
         .iOSApplication(
-            name: "TailorResume",
-            targets: ["TailorResumeApp"],
-            bundleIdentifier: "com.emilytanis.tailorresume",
+            name: "Align",
+            targets: ["AlignApp"],
+            bundleIdentifier: "com.emilytanis.align",
             teamIdentifier: "",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .document),
-            accentColor: .presetColor(.blue),
+            appIcon: .asset("AppIcon"),
+            accentColor: .asset("AccentColor"),
             supportedDeviceFamilies: [
                 .pad,
                 .phone
@@ -32,8 +32,11 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "TailorResumeApp",
-            path: "Sources/TailorResumeApp"
+            name: "AlignApp",
+            path: "Sources/AlignApp",
+            resources: [
+                .process("Assets.xcassets")
+            ]
         )
     ]
 )

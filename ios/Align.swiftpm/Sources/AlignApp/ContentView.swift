@@ -8,8 +8,11 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             InputView(viewModel: viewModel, settings: settings)
-                .navigationTitle("Tailor Resume")
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        AlignWordmark()
+                    }
                     ToolbarItem(placement: .primaryAction) {
                         Button {
                             showingSettings = true

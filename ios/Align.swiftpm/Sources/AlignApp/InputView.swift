@@ -6,12 +6,12 @@ struct InputView: View {
 
     var body: some View {
         Form {
-            Section("Your current resume") {
+            Section("Current resume") {
                 TextEditor(text: $viewModel.resumeText)
                     .frame(minHeight: 160)
             }
 
-            Section("Job description you're applying to") {
+            Section("Target job description") {
                 TextEditor(text: $viewModel.jobDescription)
                     .frame(minHeight: 160)
             }
@@ -32,14 +32,17 @@ struct InputView: View {
                         if viewModel.isLoading {
                             ProgressView()
                         } else {
-                            Text("Tailor My Resume")
+                            Text("Align Resume")
                                 .bold()
                         }
                         Spacer()
                     }
                 }
                 .disabled(!viewModel.canSubmit)
+                .tint(.alignSecondaryIndigo)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.alignBase)
     }
 }

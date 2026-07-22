@@ -1,4 +1,4 @@
-# Tailor Resume
+# Align
 
 An iOS app that rewrites a resume to fit a specific job description, using
 the Claude API. Paste your current resume and a job posting in, get a
@@ -7,7 +7,7 @@ job is actually asking for.
 
 ## Project layout
 
-- `ios/TailorResume.swiftpm` — the iOS app (SwiftUI, Swift Playgrounds App
+- `ios/Align.swiftpm` — the iOS app (SwiftUI, Swift Playgrounds App
   project format).
 - `backend/` — small Express/TypeScript API that calls the Claude API on the
   app's behalf. See `backend/README.md`.
@@ -22,7 +22,7 @@ backend calls Claude.
 
 1. **Backend**: follow `backend/README.md` to run it locally or deploy it
    somewhere public (Render/Fly/Railway all work with the free tier).
-2. **iOS app**: on a Mac, open `ios/TailorResume.swiftpm` in Xcode 15+ (or
+2. **iOS app**: on a Mac, open `ios/Align.swiftpm` in Xcode 15+ (or
    Swift Playgrounds on iPad/Mac). Run it on a simulator or device, tap the
    gear icon, and set the server URL + shared secret to match your backend.
 
