@@ -1,14 +1,11 @@
 import SwiftUI
 
-struct ResultView: View {
-    let tailoredResume: String
-    let onStartOver: () -> Void
-
-    @Environment(\.dismiss) private var dismiss
+struct TailoredResumeView: View {
+    @ObservedObject var flow: AppFlowViewModel
 
     var body: some View {
         ScrollView {
-            Text(tailoredResume)
+            Text(flow.tailorResult?.tailoredResume ?? "")
                 .font(.custom("Georgia", size: 16, relativeTo: .body))
                 .textSelection(.enabled)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -19,15 +16,14 @@ struct ResultView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                ShareLink(item: tailoredResume)
-                    .tint(.alignSecondaryIndigo)
+                ShareLink(item: flow.tailorResult?.tailoredResume ?? "")
+                    .tint(Color.alignSecondaryIndigo)
             }
             ToolbarItem(placement: .cancellationAction) {
                 Button("Start Over") {
-                    onStartOver()
-                    dismiss()
+                    flow.startOver()
                 }
-                .tint(.alignSecondaryIndigo)
+                .tint(Color.alignSecondaryIndigo)
             }
         }
     }

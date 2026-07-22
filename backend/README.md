@@ -1,8 +1,9 @@
-# Tailor Resume — Backend
+# Align — Backend
 
-Small Express/TypeScript API that takes a resume + a target job description and
-returns a tailored resume, using the Claude API. This exists so the Anthropic
-API key never ships inside the iOS app.
+Small Express/TypeScript API behind the Align iOS app. Extracts resume text
+from an uploaded file, then tailors that resume to a target job description
+and scores the alignment, using the Claude API. This exists so the
+Anthropic API key never ships inside the iOS app.
 
 ## Setup
 
@@ -21,7 +22,22 @@ per-user API keys/quotas) before this handles paying users at scale.
 
 ## API
 
-`POST /v1/tailor`
+### `POST /v1/extract-resume`
+
+Extracts plain text from an uploaded resume file (PDF, DOCX, or TXT), so
+the app never has to parse those formats itself. Called once, when the
+user first uploads/replaces their base resume.
+
+Headers: `Authorization: Bearer <APP_SHARED_SECRET>`
+
+Body: `multipart/form-data` with a single field `resume` (the file).
+
+Response:
+```json
+{ "resumeText": "..." }
+```
+
+### `POST /v1/tailor`
 
 Headers: `Authorization: Bearer <APP_SHARED_SECRET>`, `Content-Type: application/json`
 
@@ -32,10 +48,20 @@ Body:
 
 Response:
 ```json
-{ "tailoredResume": "..." }
+{
+  "alignmentScore": 92,
+  "matched": [{ "title": "...", "detail": "..." }],
+  "gaps": [{ "title": "...", "detail": "..." }],
+  "tailoredResume": "..."
+}
 ```
 
-Rate limited to 20 requests/hour per IP by default (`src/index.ts`).
+`alignmentScore`, `matched`, and `gaps` are produced by asking Claude for a
+structured tool call (`src/tailor.ts`) rather than parsing free-text, so the
+shape is reliable.
+
+Both endpoints are rate limited to 20 requests/hour per IP by default
+(`src/index.ts`). File uploads are capped at 10MB.
 
 ## Deploying
 

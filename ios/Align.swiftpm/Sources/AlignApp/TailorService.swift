@@ -25,8 +25,8 @@ struct TailorRequestBody: Encodable {
     let jobDescription: String
 }
 
-struct TailorResponseBody: Decodable {
-    let tailoredResume: String
+struct ExtractResumeResponseBody: Decodable {
+    let resumeText: String
 }
 
 struct TailorErrorBody: Decodable {
@@ -34,11 +34,42 @@ struct TailorErrorBody: Decodable {
 }
 
 enum TailorService {
+    static func extractResume(
+        fileData: Data,
+        filename: String,
+        mimeType: String,
+        settings: AppSettings
+    ) async throws -> String {
+        guard let baseURL = settings.serverURL else {
+            throw TailorServiceError.invalidServerURL
+        }
+
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var request = URLRequest(url: baseURL.appendingPathComponent("v1/extract-resume"))
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(settings.sharedSecret)", forHTTPHeaderField: "Authorization")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append(
+            "Content-Disposition: form-data; name=\"resume\"; filename=\"\(filename)\"\r\n"
+                .data(using: .utf8)!
+        )
+        body.append("Content-Type: \(mimeType)\r\n\r\n".data(using: .utf8)!)
+        body.append(fileData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+
+        let responseBody: ExtractResumeResponseBody = try await send(request)
+        return responseBody.resumeText
+    }
+
     static func tailorResume(
         resumeText: String,
         jobDescription: String,
         settings: AppSettings
-    ) async throws -> String {
+    ) async throws -> TailorResult {
         guard let baseURL = settings.serverURL else {
             throw TailorServiceError.invalidServerURL
         }
@@ -51,6 +82,10 @@ enum TailorService {
             TailorRequestBody(resumeText: resumeText, jobDescription: jobDescription)
         )
 
+        return try await send(request)
+    }
+
+    private static func send<T: Decodable>(_ request: URLRequest) async throws -> T {
         let data: Data
         let response: URLResponse
         do {
@@ -70,10 +105,10 @@ enum TailorService {
             throw TailorServiceError.server("Server returned status \(httpResponse.statusCode).")
         }
 
-        guard let body = try? JSONDecoder().decode(TailorResponseBody.self, from: data) else {
+        guard let decoded = try? JSONDecoder().decode(T.self, from: data) else {
             throw TailorServiceError.decoding
         }
 
-        return body.tailoredResume
+        return decoded
     }
 }
